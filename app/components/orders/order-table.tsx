@@ -5,9 +5,8 @@ interface Order {
   orderDate: string;
   username: string;
   fulfillment: string;
-  paymentStatus: string;
-  salesChannel: string;
-  totalAmount: number;
+  productName: string;
+  trackingNumber?: number;
 }
 
 interface OrderTableProps {
@@ -21,21 +20,21 @@ export default function OrderTable({ orders }: OrderTableProps) {
         <tr>
           <th className="px-4 py-2 border-b">주문번호</th>
           <th className="px-4 py-2 border-b">주문날짜</th>
+          <th className="px-4 py-2 border-b">상품 이름</th>
           <th className="px-4 py-2 border-b">고객명</th>
           <th className="px-4 py-2 border-b">배송 상황</th>
-          <th className="px-4 py-2 border-b">결제 상황</th>
-          <th className="px-4 py-2 border-b">금액</th>
+          <th className="px-4 py-2 border-b">운송장번호</th>
         </tr>
       </thead>
       <tbody>
-        {orders.map((order) => (
-          <tr key={order.id}>
+        {orders.map((order, index) => (
+          <tr key={order.id + index}>
             <td className="px-4 py-2 border-b text-center">{order.id}</td>
             <td className="px-4 py-2 border-b text-center">{order.orderDate}</td>
+            <td className="px-4 py-2 border-b text-center">{order.productName}</td>
             <td className="px-4 py-2 border-b text-center">{order.username}</td>
             <td className="px-4 py-2 border-b text-center">{order.fulfillment}</td>
-            <td className="px-4 py-2 border-b text-center">{order.paymentStatus}</td>
-            <td className="px-4 py-2 border-b text-center">{order.totalAmount}</td>
+            <td className="px-4 py-2 border-b text-center">{order.trackingNumber ? order.trackingNumber : '-'}</td>
           </tr>
         ))}
       </tbody>

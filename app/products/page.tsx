@@ -30,14 +30,14 @@ export default function ProductManagementPage() {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Product Management</h1>
       <div className="flex justify-between items-center mb-4">
-      <div className="relative">
-          <button
-            className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded"
-            onClick={toggleFilter}
-          >
-            필터
-          </button>
-          {isFilterOpen && <Filters kindOfFilters={["출시전", "재고없음"]} onFilterChange={() => fetchProducts(1)} />}
+        <div className="relative">
+            <button
+              className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded"
+              onClick={toggleFilter}
+            >
+              필터
+            </button>
+            {isFilterOpen && <Filters kindOfFilters={["출시전", "재고없음"]} onFilterChange={() => fetchProducts(1)} />}
         </div>
         <div>
           <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded mr-2">

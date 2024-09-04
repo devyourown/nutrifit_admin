@@ -1,3 +1,5 @@
+import { OrderItemExcelDto } from "./types";
+
 export async function getOrdersByPage(page: number) {
     try {
         const token = localStorage.getItem('jwt');
@@ -40,6 +42,23 @@ export async function getOrdersForExcelByFilter(status: string) {
         return await response.json();
     } catch (e) {
         console.error('Failed to fetch orders : ', e);
+    }
+}
+
+export async function updateTrackingNumbers(items: OrderItemExcelDto[]) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/tracking`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(items)
+        });
+        return response;
+    } catch (e) {
+        console.error('Failed to update orders : ', e);
     }
 }
 

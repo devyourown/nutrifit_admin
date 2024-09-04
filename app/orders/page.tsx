@@ -7,7 +7,7 @@ import Filters from '../components/filter';
 import { getOrdersByPage, getOrdersByStatus, getOrdersForExcelByFilter } from '../lib/api';
 import * as XLSX from 'xlsx';
 import {saveAs} from 'file-saver'
-import { convertDtoToExcel } from '../lib/converter';
+import { filters } from '../lib/types';
 
 
 export default function Orders() {
@@ -22,18 +22,16 @@ export default function Orders() {
     setLoading(true);
     try {
       // API 호출
-      const data = await getOrdersForExcelByFilter('출고완료');
-      console.log(data);
-      const excel = convertDtoToExcel(data);
-      console.log(excel);
+      const data = await getOrdersForExcelByFilter(status);
       // 엑셀 데이터 포맷 지정
+      console.log(data);
       const worksheet = XLSX.utils.json_to_sheet(data);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
 
       // 컬럼 이름 설정
       XLSX.utils.sheet_add_aoa(worksheet, [
-        ["주문번호", "주문상품", "주문수", "구매자", "수령자명", "수령자휴대폰번호", "수령자전화번호", "구매자명", "구매자전화번호", "우편번호", "배송지주소"]
+        ["주문번호", "주문상품", "주문수", "수령자명", "수령자전화번호", "구매자명", "구매자전화번호", "배송지주소", "배송시 주의사항"]
       ], { origin: 'A1' });
 
       // Excel 파일 생성
@@ -86,7 +84,7 @@ export default function Orders() {
           >
             필터
           </button>
-          {isFilterOpen && <Filters kindOfFilters={["출고 처리 전", "출고 처리 후"]} onFilterChange={setStatus} />}
+          {isFilterOpen && <Filters kindOfFilters={filters} onFilterChange={setStatus} />}
           <div>
           <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded mr-2">
             엑셀로 상품 업로드하기

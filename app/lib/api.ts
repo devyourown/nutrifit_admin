@@ -15,7 +15,13 @@ export async function getOrdersByPage(page: number) {
 
 export async function getOrdersByStatus(status: string, page: number) {
     try {
-        const response = await fetch(`${process.env.BACKEND_URL}/orders/admin/filter?status=${status}&page=${page}&size=${10}`);
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/admin/filter?status=${status}&page=${page}&size=${10}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
         return await response.json();
     } catch (e) {
         console.error('Failed to fetch orders : ', e);

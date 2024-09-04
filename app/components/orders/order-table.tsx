@@ -30,12 +30,12 @@ export default function OrderTable({ orders }: OrderTableProps) {
       <tbody>
         {orders.map((order) => (
           <tr key={order.id}>
-            <td className="px-4 py-2 border-b">{order.id}</td>
-            <td className="px-4 py-2 border-b">{order.orderDate}</td>
-            <td className="px-4 py-2 border-b">{order.username}</td>
-            <td className="px-4 py-2 border-b">{order.fulfillment}</td>
-            <td className="px-4 py-2 border-b">{order.paymentStatus}</td>
-            <td className="px-4 py-2 border-b">{order.totalAmount}</td>
+            <td className="px-4 py-2 border-b text-center">{order.id}</td>
+            <td className="px-4 py-2 border-b text-center">{order.orderDate}</td>
+            <td className="px-4 py-2 border-b text-center">{order.username}</td>
+            <td className="px-4 py-2 border-b text-center">{order.fulfillment}</td>
+            <td className="px-4 py-2 border-b text-center">{order.paymentStatus}</td>
+            <td className="px-4 py-2 border-b text-center">{order.totalAmount}</td>
           </tr>
         ))}
       </tbody>

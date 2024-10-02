@@ -14,8 +14,8 @@ import ExcelUploader from '../components/orders/excel-uploader';
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
@@ -43,15 +43,15 @@ export default function Orders() {
   }, [status, currentPage]);
 
   async function fetchOrders(page: number) {
-    const data = await getOrdersByPage(page-1);
+    const data = await getOrdersByPage(page);
     setOrders(data.content);
-    setTotalPages(data.totalPages);
+    setTotalPages(data.page.totalPages);
   }
 
   async function fetchOrdersByFilter(status: string, page: number) {
-    const data = await getOrdersByStatus(status, page-1);
+    const data = await getOrdersByStatus(status, page);
     setOrders(data.content);
-    setTotalPages(data.totalPages);
+    setTotalPages(data.page.totalPages);
   }
 
   function toggleFilter() {

@@ -1,4 +1,4 @@
-import { OrderItemExcelDto } from "./types";
+import { OrderItemExcelDto, ProductDto } from "./types";
 
 export async function getOrdersByPage(page: number) {
     try {
@@ -59,6 +59,33 @@ export async function updateTrackingNumbers(items: OrderItemExcelDto[]) {
         return response;
     } catch (e) {
         console.error('Failed to update orders : ', e);
+    }
+}
+
+export async function fetchProductsByPage(page: number) {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/products?page=${page}&size=10`);
+        return await response.json();
+    } catch (e) {
+        console.error('Failed to fetch products', e);
+    }
+}
+
+export async function addProduct(product: ProductDto) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/products/admin`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(product),
+        });
+        return response.status === 201;
+    } catch (e) {
+        console.error('Failed to add Product', e);
+        return false;
     }
 }
 

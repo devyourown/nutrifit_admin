@@ -4,9 +4,10 @@ import { OptionDto, ProductDto } from '@/app/lib/types';
 interface VariantsProps {
   product: ProductDto;
   onAddOption: (option: OptionDto) => void;
+  onRemoveOption: (index: number) => void;
 }
 
-export default function Variants({ product, onAddOption }: VariantsProps) {
+export default function Variants({ product, onAddOption, onRemoveOption }: VariantsProps) {
   const [optionInput, setOptionInput] = useState<OptionDto>({
     quantity: 0,
     price: 0,
@@ -61,10 +62,17 @@ export default function Variants({ product, onAddOption }: VariantsProps) {
       {product.options.length > 0 && (
         <div className="mt-4">
           <h3 className="text-xl font-semibold">추가된 옵션들:</h3>
-          <ul>
-            {product.options.map(option => (
-              <li key={option.description} className="mt-2">
-                {`설명: ${option.description}, 개수: ${option.quantity}, 가격: ${option.price}`}
+          <ul className="space-y-2">
+            {product.options.map((option, index) => (
+              <li key={index} className="flex justify-between items-center">
+                <span>{`설명: ${option.description}, 개수: ${option.quantity}, 가격: ${option.price}`}</span>
+                <button
+                type='button'
+                  onClick={() => onRemoveOption(index)}
+                  className="bg-red-500 text-white px-2 py-1 rounded ml-4"
+                >
+                  삭제
+                </button>
               </li>
             ))}
           </ul>

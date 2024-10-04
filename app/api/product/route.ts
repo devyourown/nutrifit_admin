@@ -29,7 +29,7 @@ async function uploadToS3(file: File) {
     }
 }
 
-export async function deleteFileFromS3(file: string) {
+async function deleteFileFromS3(file: string) {
     const deleteParams = {
         Bucket: process.env.AWS_BUCKET_NAME!,
         Key: file, // 삭제할 파일의 Key
@@ -43,10 +43,22 @@ export async function deleteFileFromS3(file: string) {
       }
 }
 
+export async function DELETE(req: NextRequest) {
+    const {urls, detailUrls} = await req.json();
+    for (const url of urls) {
+        await deleteFileFromS3(url);
+    }
+    for (const url of detailUrls) {
+        await deleteFileFromS3(url);
+    }
+    return NextResponse.json('DELETED FILES');
+}
+
 export async function POST(req: NextRequest) {
     try {
         const formData = await req.formData();
         const files = formData.getAll('files') as File[];
+        const detailFiles = formData.getAll('detail_files') as File[];
         if (files.length === 0) {
             return NextResponse.json({ error: 'file has one at least' }, { status: 403 }); 
         }
@@ -57,8 +69,15 @@ export async function POST(req: NextRequest) {
             const url = await uploadToS3(file);
             uploadedUrls.push(url);
         }
+        const uploadedDetailUrls = [];
+        for (const key in detailFiles) {
+            const file = detailFiles[key];
+            const url = await uploadToS3(file);
+            uploadedDetailUrls.push(url);
+        }
         return NextResponse.json({
             urls: uploadedUrls,
+            detailUrls: uploadedDetailUrls,
             success: true
         });
     } catch (error) {

@@ -90,13 +90,17 @@ export async function addProduct(product: ProductDto) {
 }
 
 export async function checkAdmin(token: string) {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/admin/check`, {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        }
-    });
-    if (response.ok) return true;
-    return false;
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/admin/check`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        if (response.ok) return true;
+        return false;
+    } catch (e) {
+        return false;
+    }
 }
 
 export async function login(email: string, password: string) {
@@ -126,5 +130,23 @@ export async function signup(email: string, password: string, username: string) 
         return response;
     } catch (e) {
         console.error('Failed to login : ', e);
+    }
+}
+
+export async function makeProduct(product: ProductDto) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/products/admin`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(product),
+        });
+        return response;
+    } catch (e) {
+        console.error('Failed to make Product : ', e);
+        throw e;
     }
 }

@@ -1,12 +1,31 @@
 import { ProductDto } from '@/app/lib/types';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface OrganizeProps {
   product: ProductDto;
   handleChange: (field: keyof ProductDto, value: any) => void;
+  handleBadgeAdd: (badge: string) => void;
+  handleBadgeRemove: (index: number) => void;
 }
 
-const Organize: React.FC<OrganizeProps> = ({ product, handleChange }) => {
+export default function Organize({ product, handleChange, handleBadgeAdd, handleBadgeRemove }: OrganizeProps) {
+  const [badgeInput, setBadgeInput] = useState(''); // To manage the input for adding badges
+
+  const handleBadgeAddClick = () => {
+    if (badgeInput.trim() !== '') {
+      handleBadgeAdd(badgeInput.trim()); // Use the parent function to add the badge
+      setBadgeInput(''); // Clear the input
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent form submission
+      handleBadgeAddClick(); // Call the add badge function
+    }
+  };
+
+
   return (
     <div className="p-6 bg-white rounded shadow-lg max-w-4xl mx-auto">
       <h2 className="text-2xl font-semibold mb-4">분류하기</h2>
@@ -23,21 +42,46 @@ const Organize: React.FC<OrganizeProps> = ({ product, handleChange }) => {
           >
             <option value="">카테고리를 선택하세요.</option>
             <option value="매운맛">매운맛</option>
-            {/* Add collections as needed */}
+            {/* Add more categories as needed */}
           </select>
         </div>
       </div>
 
       <div className="mb-4">
-        <label htmlFor="badgeTexts" className="block text-gray-700 text-sm font-bold mb-2">상품 뱃지 (콤마로 구분해 주세요.)</label>
-        <input
-          id="badgeTexts"
-          type="text"
-          value={product.badgeTexts}
-          onChange={(e) => handleChange('badgeTexts', e.target.value)}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          placeholder="뱃지를 추가하세요."
-        />
+        <label htmlFor="badgeTexts" className="block text-gray-700 text-sm font-bold mb-2">상품 뱃지</label>
+        <div className="flex">
+          <input
+            id="badgeTexts"
+            type="text"
+            value={badgeInput}
+            onChange={(e) => setBadgeInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="w-full border border-gray-300 px-4 py-2 rounded-md text-gray-700 focus:outline-none focus:border-blue-500 transition ease-in-out duration-150"
+            placeholder="뱃지를 입력하세요"
+          />
+          <button
+            type="button"
+            onClick={handleBadgeAddClick}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow transition duration-150"
+          >
+            추가
+          </button>
+        </div>
+      </div>
+
+      {/* Display added badges */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {product.badgeTexts.map((badge, index) => (
+          <div key={index} className="bg-blue-500 text-white px-3 py-1 rounded-full flex items-center">
+            <span>{badge}</span>
+            <button
+              onClick={() => handleBadgeRemove(index)}
+              className="ml-2 text-sm text-red-200 hover:text-red-500"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
       </div>
 
       <div className="mb-4">
@@ -51,12 +95,9 @@ const Organize: React.FC<OrganizeProps> = ({ product, handleChange }) => {
             checked={product.released}
             onChange={(e) => handleChange('released', e.target.checked)}
             className="toggle-checkbox block w-6 h-6 bg-white border-4 rounded-full cursor-pointer focus:ring-blue-500"
-    />
+          />
         </div>
       </div>
     </div>
   );
-};
-
-export default Organize;
-
+}

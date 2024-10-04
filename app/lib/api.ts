@@ -71,20 +71,29 @@ export async function fetchProductsByPage(page: number) {
     }
 }
 
-export async function addProduct(product: ProductDto) {
+export async function fetchProductById(id: number) {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/products/${id}`);
+        return await response.json();
+    } catch (e) {
+        console.error('Failed to fetch product : ', e);
+    }
+}
+
+export async function updateProduct(product: ProductDto) {
     try {
         const token = localStorage.getItem('jwt');
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/products/admin`, {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(product),
         });
-        return response.status === 201;
+        return response.status === 200;
     } catch (e) {
-        console.error('Failed to add Product', e);
+        console.error('Failed to update Product', e);
         return false;
     }
 }
@@ -144,9 +153,9 @@ export async function makeProduct(product: ProductDto) {
             },
             body: JSON.stringify(product),
         });
-        return response;
+        return response.status === 201;
     } catch (e) {
         console.error('Failed to make Product : ', e);
-        throw e;
+        return false;
     }
 }

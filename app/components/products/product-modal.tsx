@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { OptionDto, ProductDto } from '@/app/lib/types';
 import Collapsible from './collapsible';
 import Thumbnail from './create/thumbnail';
@@ -11,10 +11,12 @@ import Policy from './create/policy';
 interface AddProductModalProps {
   onClose: () => void;
   onSubmit: (product: ProductDto, images: File[], detailImages: File[]) => void;
+  onEdit: (product: ProductDto, images: File[], detailImages: File[], deleteImages: string[]) => void;
+  productToEdit?: ProductDto;
 }
 
-export default function AddProductModal({ onClose, onSubmit }: AddProductModalProps) {
-  const [product, setProduct] = useState<ProductDto>({
+export default function ProductModal({ onClose, onSubmit, productToEdit, onEdit }: AddProductModalProps) {
+  const [product, setProduct] = useState<ProductDto>(productToEdit || {
     id: 0,
     name: '',
     description: '',
@@ -36,6 +38,7 @@ export default function AddProductModal({ onClose, onSubmit }: AddProductModalPr
 
   const [images, setImages] = useState<File[]>([]);
   const [detailImages, setDetailImages] = useState<File[]>([]);
+  const [deleteImages, setDeleteImages] = useState<string[]>([]);
 
   const handleInputChange = (field: keyof ProductDto, value: string) => {
     setProduct((prev) => ({ ...prev, [field]: value }));
@@ -47,6 +50,21 @@ export default function AddProductModal({ onClose, onSubmit }: AddProductModalPr
       options: [...prev.options, option]
     }));
   };
+
+  const handleOptionRemove = (index: number) => {
+    setProduct((prev) => ({
+      ...prev,
+      options: prev.options.filter((_, i) => i !== index),
+    }));
+  }
+
+  const handleOriginalImageRemove = (url: string) => {
+    const deleted = product.imageUrls.find((image) => image === url);
+    const detailDeleted = product.productDetailDto.detailImageUrls.find((image) => image === url);
+    product.imageUrls = product.imageUrls.filter((image) => image !== url);
+    product.productDetailDto.detailImageUrls = product.productDetailDto.detailImageUrls.filter((image) => image !== url);
+    setDeleteImages([...deleteImages, deleted || detailDeleted!]);
+  }
 
   const handleImageAdd = (imageFiles: File[]) => {
     setImages([...images, ...imageFiles]);
@@ -121,8 +139,13 @@ export default function AddProductModal({ onClose, onSubmit }: AddProductModalPr
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (images.length === 0) {
+    if (images.length === 0 && deleteImages.length === 0) {
       alert('이미지없이는 상품을 추가할 수 없습니다.');
+      return;
+    }
+    if (productToEdit) {
+      onEdit(product, images, detailImages, deleteImages);
+      onClose();
       return;
     }
     onSubmit(product, images, detailImages);
@@ -132,7 +155,8 @@ export default function AddProductModal({ onClose, onSubmit }: AddProductModalPr
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl w-full space-y-6 overflow-y-auto max-h-screen">
-        <h2 className="text-2xl font-semibold">새상품 추가하기</h2>
+        <h2 className="text-2xl font-semibold">
+          {productToEdit ? '상품 수정하기' : '새상품 추가하기'}</h2>
         <form onSubmit={handleSubmit}>
           <Collapsible label="전반적인 상품 정보">
           <GeneralInformation product={product} handleChange={handleInputChange} />
@@ -144,18 +168,26 @@ export default function AddProductModal({ onClose, onSubmit }: AddProductModalPr
           handleBadgeRemove={handleBadgeRemove}/>
           </Collapsible>
           <Collapsible label="옵션 추가하기">
-            <Variants product={product} onAddOption={handleOptionAdd}/>
+            <Variants product={product} onAddOption={handleOptionAdd} onRemoveOption={handleOptionRemove}/>
           </Collapsible>
           <Collapsible label="썸네일 및 상품 사진">
           <div className="p-6 bg-white rounded shadow-lg max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold mb-6">썸네일 및 상품 사진</h2>
-            <Thumbnail images={images} onImageAdd={handleImageAdd} onImageRemove={handleImageRemove}/>
+            <Thumbnail originalImages={product.imageUrls} 
+            images={images} 
+            onImageAdd={handleImageAdd} 
+            onImageRemove={handleImageRemove} 
+            onOriginalRemove={handleOriginalImageRemove}/>
           </div>
           </Collapsible>
           <Collapsible label="상세페이지 이미지">
           <div className="p-6 bg-white rounded shadow-lg max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold mb-6">상세페이지 이미지</h2>
-            <Thumbnail images={detailImages} onImageAdd={handleDetailImageAdd} onImageRemove={handleDetailImageRemove}/>
+            <Thumbnail originalImages={product.productDetailDto.detailImageUrls} 
+            images={detailImages} 
+            onImageAdd={handleDetailImageAdd} 
+            onImageRemove={handleDetailImageRemove}
+            onOriginalRemove={handleOriginalImageRemove}/>
           </div>
           </Collapsible>
           <Collapsible label="배송 정보">
@@ -171,7 +203,9 @@ export default function AddProductModal({ onClose, onSubmit }: AddProductModalPr
           </Collapsible>
           <div className="flex justify-end mt-4">
             <button type="button" onClick={onClose} className="bg-gray-300 text-black px-4 py-2 rounded mr-2">취소하기</button>
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">상품 추가하기</button>
+            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+            {productToEdit ? '상품 수정하기' : '상품 추가하기'}
+            </button>
           </div>
         </form>
       </div>

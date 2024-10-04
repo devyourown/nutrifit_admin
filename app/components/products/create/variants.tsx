@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { OptionDto } from '@/app/lib/types';
+import { OptionDto, ProductDto } from '@/app/lib/types';
 
 interface VariantsProps {
+  product: ProductDto;
   onAddOption: (option: OptionDto) => void;
 }
 
-const Variants: React.FC<VariantsProps> = ({ onAddOption }) => {
-    const [options, setOptions] = useState<OptionDto[]>([]);
+export default function Variants({ product, onAddOption }: VariantsProps) {
   const [optionInput, setOptionInput] = useState<OptionDto>({
     quantity: 0,
     price: 0,
@@ -19,9 +19,7 @@ const Variants: React.FC<VariantsProps> = ({ onAddOption }) => {
 
   const handleAddOption = () => {
     if (optionInput.description.trim()) {
-        const newOption = { ...optionInput, }; // Ensure each option has a unique ID
-        setOptions(prev => [...prev, newOption]);
-        onAddOption(newOption);
+        onAddOption(optionInput);
         setOptionInput({ quantity: 0, price: 0, description: '' }); // Reset the input fields
       }
   };
@@ -46,23 +44,25 @@ const Variants: React.FC<VariantsProps> = ({ onAddOption }) => {
           type="number"
           className="border w-full p-2 rounded"
           onChange={(e) => handleInputChange('quantity', Number(e.target.value))}
+          value={optionInput.quantity === 0 ? undefined : optionInput.quantity}
           placeholder="개수"
         />
         <input
           type="number"
           className="border w-full p-2 rounded"
           onChange={(e) => handleInputChange('price', Number(e.target.value))}
+          value={optionInput.price === 0 ? undefined : optionInput.price}
           placeholder="가격"
         />
         <button type='button' onClick={handleAddOption} className="col-span-1 md:col-span-2 bg-blue-500 text-white px-4 py-2 rounded mt-4">
           옵션 추가하기
         </button>
       </div>
-      {options.length > 0 && (
+      {product.options.length > 0 && (
         <div className="mt-4">
           <h3 className="text-xl font-semibold">추가된 옵션들:</h3>
           <ul>
-            {options.map(option => (
+            {product.options.map(option => (
               <li key={option.description} className="mt-2">
                 {`설명: ${option.description}, 개수: ${option.quantity}, 가격: ${option.price}`}
               </li>
@@ -73,5 +73,3 @@ const Variants: React.FC<VariantsProps> = ({ onAddOption }) => {
     </div>
   );
 };
-
-export default Variants;

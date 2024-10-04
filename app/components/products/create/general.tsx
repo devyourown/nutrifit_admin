@@ -32,7 +32,7 @@ const GeneralInformation: React.FC<GeneralInformationProps> = ({ product, handle
             id="stockQuantity"
             type="number"
             placeholder="재고 개수를 숫자로 입력해 주세요."
-            value={product.stockQuantity !== 0 ? product.stockQuantity : 0 }
+            value={product.stockQuantity !== 0 ? product.stockQuantity : undefined }
             onChange={(e) => handleChange('stockQuantity', e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
@@ -45,7 +45,7 @@ const GeneralInformation: React.FC<GeneralInformationProps> = ({ product, handle
             id="originalPrice"
             type="number"
             placeholder="원래 가격"
-            value={product.originalPrice !== 0 ? product.originalPrice : 0}
+            value={product.originalPrice !== 0 ? product.originalPrice : undefined}
             onChange={(e) => handleChange('originalPrice', e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
@@ -58,7 +58,7 @@ const GeneralInformation: React.FC<GeneralInformationProps> = ({ product, handle
             id="discountedPrice"
             type="number"
             placeholder="할인 가격"
-            value={product.discountedPrice !== 0 ? product.discountedPrice : 0}
+            value={product.discountedPrice !== 0 ? product.discountedPrice : undefined}
             onChange={(e) => handleChange('discountedPrice', e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />

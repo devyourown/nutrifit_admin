@@ -20,6 +20,7 @@ export type ProductDetailDto = {
 }
 
 export type ProductDto = {
+    id: number;
     name: string;
     description: string;
     category: string;

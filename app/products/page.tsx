@@ -8,7 +8,6 @@ import { fetchProductsByPage, makeProduct } from '../lib/api';
 import { ProductDto } from '../lib/types';
 import AddProductModal from '../components/products/product-modal';
 import Modal from '../components/orders/upload-modal';
-import { deleteFileFromS3 } from '../api/product/route';
 
 export default function ProductManagementPage() {
   const [products, setProducts] = useState([]);
@@ -17,26 +16,38 @@ export default function ProductManagementPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleAddProduct = async (newProduct: ProductDto, images: File[]) => {
+    const handleAddProduct = async (newProduct: ProductDto, images: File[], detailImages: File[]) => {
         const formData = new FormData();
         images.forEach((image) => {
           formData.append('files', image);
+        });
+        detailImages.forEach((image) => {
+          formData.append('detail_files', image);
         });
         try {
           const uploadResponse = await fetch('/api/product', {
             method: 'POST',
             body: formData,
           });
-          const { uploadedUrls } = await uploadResponse.json();
-          newProduct.imageUrls = uploadedUrls
-          const response = await makeProduct(localStorage.getItem('token')!, newProduct);
+          const { urls, detailUrls } = await uploadResponse.json();
+          newProduct.imageUrls = urls;
+          newProduct.productDetailDto.detailImageUrls = detailUrls;
+          const response = await makeProduct(newProduct);
+          console.log(response);
           if (response.status === 201) {
             alert('상품이 성공적으로 추가 되었습니다.');
           } else {
-            uploadedUrls.forEach(async (url: string) => await deleteFileFromS3(url));
             alert('상품 등록에 실패했습니다. 다시 시도해 주세요.');
+            throw Error('response status error');
           }
         } catch (e) {
+          if (newProduct.imageUrls) {
+            await fetch('/api/product', {
+              method: 'DELETE',
+              body: JSON.stringify({ urls: newProduct.imageUrls, 
+                detailUrls: newProduct.productDetailDto.detailImageUrls}),
+            });
+          }
           console.error('Failed to make product : ', e);
         }
     };

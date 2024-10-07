@@ -91,6 +91,21 @@ export async function fetchCouponsByUser(id: number, page: number) {
     }  
 }
 
+export async function fetchCouponsByPage(page: number) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/coupon/admin?page${page}&size=10`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+        return await response.json();
+    } catch (e) {
+        console.error('Failed to fetch coupons : ', e);
+    }  
+}
+
 export async function fetchQnasByUser(id: number, page: number) {
     try {
         const token = localStorage.getItem('jwt');

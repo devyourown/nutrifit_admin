@@ -1,5 +1,126 @@
 import { OrderItemExcelDto, ProductDto } from "./types";
 
+export async function fetchUsersByPage(page: number) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/admin?page=${page}&size=${8}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+        return await response.json();
+    } catch (e) {
+        console.error('Failed to fetch users : ', e);
+    }
+}
+
+export async function fetchReviewsByUser(id: number, page: number) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reviews/admin/${id}?page=${page}&size=10`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+        return await response.json();
+    } catch (e) {
+        console.error('Faield to fetch point : ', e);
+    }
+}
+
+export async function deleteReview(id: number) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reviews/admin/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        return await response.json();
+    } catch (e) {
+        console.error('Faield to delete review : ', e);
+    }
+}
+
+export async function fetchPointByUser(id: number) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/point/admin/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+        return await response.json();
+    } catch (e) {
+        console.error('Faield to fetch point : ', e);
+    }
+}
+
+export async function fetchPointTransactionsByUser(id: number, page: number) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/point/admin/transactions/${id}?page${page}&size=10`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+        return await response.json();
+    } catch (e) {
+        console.error('Failed to fetch qnas : ', e);
+    }
+}
+
+export async function fetchCouponsByUser(id: number, page: number) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/coupon/admin/${id}?page${page}&size=10`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+        return await response.json();
+    } catch (e) {
+        console.error('Failed to fetch coupons : ', e);
+    }  
+}
+
+export async function fetchQnasByUser(id: number, page: number) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/qna/admin/${id}?page${page}&size=5`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+        return await response.json();
+    } catch (e) {
+        console.error('Failed to fetch qnas : ', e);
+    }
+}
+
+export async function fetchPaymentsByUser(id: number, page: number) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/payment/admin/${id}?page=${page}&size=10`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+        return await response.json();
+    } catch (e) {
+        console.error('Failed to fetch orders : ', e);
+    }
+}
+
 export async function getOrdersByPage(page: number) {
     try {
         const token = localStorage.getItem('jwt');

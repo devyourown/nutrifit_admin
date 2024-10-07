@@ -30,7 +30,7 @@ export default function ProductTable({ products, onEdit }: ProductTableProps) {
             <td className="px-4 py-2 border-b text-center">{product.originalPrice + '/' + product.discountedPrice}</td>
             <td className="px-4 py-2 border-b text-center">{product.released ? '출시' : '출시전'}</td>
             <td className="px-4 py-2 border-b text-center">{product.stockQuantity}</td>
-            <td className="px-4 py-2 border-b text-center">{(product.reviewRating! / product.reviewCount!).toFixed(1) + '/' + product.reviewCount}</td>
+            <td className="px-4 py-2 border-b text-center">{product.reviewCount === 0 ? '0/0' : (product.reviewRating! / product.reviewCount!).toFixed(1) + '/' + product.reviewCount}</td>
             <td className="px-4 py-2 border-b text-center relative">
               {/* "..." 버튼 */}
               <button

@@ -3,23 +3,44 @@
 import { useEffect, useState } from "react";
 import Modal from "../components/orders/upload-modal";
 import Pagination from "../components/pagination";
-import { fetchCouponsByPage, fetchCouponsByUser } from "../lib/api";
+import { createCoupon, deleteCoupon, fetchCouponsByPage } from "../lib/api";
+import CouponTable from "../components/coupons/coupon-table";
+import CouponCreateForm from "../components/coupons/coupon-create";
+import { CouponDto } from "../lib/types";
 
 export default function CouponList() {
-    const [coupons, setCoupons] = useState([]);
+  const [coupons, setCoupons] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); 
 
   useEffect(() => {
-  }, []);
+    fetchCoupons(currentPage);
+  }, [currentPage]);
 
-  async function fetchOrders(page: number) {
+  async function fetchCoupons(page: number) {
     const data = await fetchCouponsByPage(page);
+    console.log(data);
     setCoupons(data.content);
     setTotalPages(data.page.totalPages);
   }
+
+  async function handleDeleteCoupon(couponCode: string) {
+    if (confirm("정말로 이 쿠폰을 삭제하시겠습니까?")) {
+      const data = await deleteCoupon(couponCode);
+      if (data?.status !== 200) {
+        alert("쿠폰 삭제에 실패했습니다. 쿠폰을 가지고 있는 유저가 있습니다.");
+        return;
+      }
+      fetchCoupons(currentPage); // 삭제 후 목록 업데이트
+    }
+  }
+
+  async function handleCreateCoupon(coupon: CouponDto) {
+    await createCoupon(coupon);
+    fetchCoupons(currentPage);
+  }
+
   function openModal() {
     setIsModalOpen(true);
   }
@@ -37,11 +58,9 @@ export default function CouponList() {
               onClick={openModal}>
                 쿠폰 만들기
               </button>
-              <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded mr-2">
-                쿠폰 삭제하기
-              </button>
             </div>
           </div>
+          <CouponTable coupons={coupons} onDelete={handleDeleteCoupon}/>
           <Pagination
             currentPage={currentPage} 
             totalPages={totalPages} 
@@ -50,6 +69,7 @@ export default function CouponList() {
           {isModalOpen && (
             <Modal onClose={closeModal}>
               <h2 className="text-lg font-semibold mb-4">쿠폰 만들기</h2>
+              <CouponCreateForm onSubmit={handleCreateCoupon} onClose={closeModal} />
             </Modal>
           )}
         </div>

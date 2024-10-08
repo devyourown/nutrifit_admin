@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }
           const result = await checkAdmin(token);
           if (result) {
-              router.push('/orders');
+              router.push('/');
           } else {
               router.push('/login');
           }

@@ -107,8 +107,8 @@ export type PointTransactionDto = {
     description?: string;
     discountValue: number;
     discountType: string; // 이 부분은 enum으로 변경 가능
-    validFrom: Date;
-    validUntil: Date;
+    validFrom: string;
+    validUntil: string;
     minimumOrderAmount?: number;
     maxDiscountAmount?: number;
     remainingQuantity?: number;

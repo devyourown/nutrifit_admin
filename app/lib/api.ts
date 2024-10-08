@@ -1,4 +1,4 @@
-import { OrderItemExcelDto, ProductDto } from "./types";
+import { CouponDto, OrderItemExcelDto, ProductDto } from "./types";
 
 export async function fetchUsersByPage(page: number) {
     try {
@@ -103,6 +103,39 @@ export async function fetchCouponsByPage(page: number) {
         return await response.json();
     } catch (e) {
         console.error('Failed to fetch coupons : ', e);
+    }  
+}
+
+export async function createCoupon(coupon: CouponDto) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/coupon/create`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(coupon),
+        });
+        return await response.json();
+    } catch (e) {
+        console.error('Failed to create a coupon : ', e);
+    }  
+}
+
+export async function deleteCoupon(couponCode: string) {
+    try {
+        const token = localStorage.getItem('jwt');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/coupon/admin/${couponCode}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        return response;
+    } catch (e) {
+        console.error('Failed to delete a coupon : ', e);
     }  
 }
 

@@ -15,10 +15,8 @@ export default function Page() {
         setError(''); // 초기화
 
         // 예시로 제공하는 인증 API 요청 코드 (실제 백엔드 API 연동 필요)
-        await signup(email, password, 'IAMADMIN');
+        //await signup(email, password, 'IAMADMIN');
         const response = await login(email, password);
-
-        console.log(response);
         if (response && response.ok) {
             // 로그인 성공 시 관리자 대시보드로 리다이렉트
             const data = await response.json();

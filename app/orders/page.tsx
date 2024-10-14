@@ -1,28 +1,30 @@
 "use client";
 
-import OrderTable from '../components/orders/order-table';
-import { useEffect, useState } from 'react';
-import Pagination from '../components/pagination';
-import Filters from '../components/filter';
-import { getOrdersByPage, getOrdersByStatus, getOrdersForExcelByFilter } from '../lib/api';
-import {saveAs} from 'file-saver'
-import { filters } from '../lib/types';
-import { convertJsonToExcel } from '../lib/converter';
-import Modal from '../components/orders/upload-modal';
-import ExcelUploader from '../components/orders/excel-uploader';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-
-
+import OrderTable from "../components/orders/order-table";
+import { useEffect, useState } from "react";
+import Pagination from "../components/pagination";
+import Filters from "../components/filter";
+import {
+  getOrdersByPage,
+  getOrdersByStatus,
+  getOrdersForExcelByFilter,
+} from "../lib/api";
+import { saveAs } from "file-saver";
+import { filters } from "../lib/types";
+import { convertJsonToExcel } from "../lib/converter";
+import Modal from "../components/orders/upload-modal";
+import ExcelUploader from "../components/orders/excel-uploader";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState("주문완료");
   const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
@@ -32,10 +34,12 @@ export default function Orders() {
     try {
       const limit = Math.min(totalPages * 10, 10000);
       const data = await getOrdersForExcelByFilter(status, limit);
-      const blob = new Blob([convertJsonToExcel(data)], { type: 'application/octet-stream' });
-      saveAs(blob, `orders_${new Date().toISOString().slice(0,10)}.xlsx`);
+      const blob = new Blob([convertJsonToExcel(data)], {
+        type: "application/octet-stream",
+      });
+      saveAs(blob, `orders_${new Date().toISOString().slice(0, 10)}.xlsx`);
     } catch (error) {
-      console.error('Failed to export data:', error);
+      console.error("Failed to export data:", error);
     } finally {
       setLoading(false);
     }
@@ -84,10 +88,17 @@ export default function Orders() {
           >
             필터
           </button>
-          {isFilterOpen && <Filters status={status} kindOfFilters={filters} onFilterChange={setStatus} toggleFilter={toggleFilter} />}
+          {isFilterOpen && (
+            <Filters
+              status={status}
+              kindOfFilters={filters}
+              onFilterChange={setStatus}
+              toggleFilter={toggleFilter}
+            />
+          )}
         </div>
-        <div className='flex space-x-4'>
-        <div className="flex items-center space-x-2">
+        <div className="flex space-x-4">
+          <div className="flex items-center space-x-2">
             <DatePicker
               selected={startDate}
               onChange={(date) => setStartDate(date!)}
@@ -107,25 +118,30 @@ export default function Orders() {
               className="px-3 py-2 border rounded"
             />
           </div>
-          <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded mr-2"
-          onClick={openModal}>
+          <button
+            className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded mr-2"
+            onClick={openModal}
+          >
             운송장번호 업로드하기
           </button>
-          <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded mr-2" onClick={handleExport}>
+          <button
+            className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded mr-2"
+            onClick={handleExport}
+          >
             주문목록 엑셀로 내려받기
           </button>
         </div>
       </div>
       <OrderTable orders={orders} />
       <Pagination
-        currentPage={currentPage} 
-        totalPages={totalPages} 
-        onPageChange={(page) => setCurrentPage(page)} 
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => setCurrentPage(page)}
       />
       {isModalOpen && (
         <Modal onClose={closeModal}>
           <h2 className="text-lg font-semibold mb-4">운송장번호 엑셀 업로드</h2>
-          <ExcelUploader onClose={closeModal} fetchOrders={fetchOrders} startDate={startDate} endDate={endDate}/>
+          <ExcelUploader onClose={closeModal} fetchOrders={fetchOrders} />
         </Modal>
       )}
     </div>

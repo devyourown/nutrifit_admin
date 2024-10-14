@@ -10,6 +10,9 @@ import { filters } from '../lib/types';
 import { convertJsonToExcel } from '../lib/converter';
 import Modal from '../components/orders/upload-modal';
 import ExcelUploader from '../components/orders/excel-uploader';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
 
 
 export default function Orders() {
@@ -21,10 +24,14 @@ export default function Orders() {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); 
 
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
+
   const handleExport = async () => {
     setLoading(true);
     try {
-      const data = await getOrdersForExcelByFilter(status);
+      const limit = Math.min(totalPages * 10, 10000);
+      const data = await getOrdersForExcelByFilter(status, limit);
       const blob = new Blob([convertJsonToExcel(data)], { type: 'application/octet-stream' });
       saveAs(blob, `orders_${new Date().toISOString().slice(0,10)}.xlsx`);
     } catch (error) {
@@ -40,7 +47,7 @@ export default function Orders() {
     } else {
       fetchOrders(currentPage);
     }
-  }, [status, currentPage]);
+  }, [status, currentPage, startDate, endDate]);
 
   async function fetchOrders(page: number) {
     const data = await getOrdersByPage(page);
@@ -77,9 +84,29 @@ export default function Orders() {
           >
             필터
           </button>
-          {isFilterOpen && <Filters kindOfFilters={filters} onFilterChange={setStatus} />}
+          {isFilterOpen && <Filters status={status} kindOfFilters={filters} onFilterChange={setStatus} toggleFilter={toggleFilter} />}
         </div>
-        <div>
+        <div className='flex space-x-4'>
+        <div className="flex items-center space-x-2">
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date!)}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              placeholderText="시작 날짜"
+              className="px-3 py-2 border rounded"
+            />
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date!)}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              placeholderText="종료 날짜"
+              className="px-3 py-2 border rounded"
+            />
+          </div>
           <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded mr-2"
           onClick={openModal}>
             운송장번호 업로드하기
@@ -98,7 +125,7 @@ export default function Orders() {
       {isModalOpen && (
         <Modal onClose={closeModal}>
           <h2 className="text-lg font-semibold mb-4">운송장번호 엑셀 업로드</h2>
-          <ExcelUploader onClose={closeModal} fetchOrders={fetchOrders}/>
+          <ExcelUploader onClose={closeModal} fetchOrders={fetchOrders} startDate={startDate} endDate={endDate}/>
         </Modal>
       )}
     </div>

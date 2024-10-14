@@ -5,9 +5,11 @@ import * as XLSX from 'xlsx';
 interface ExcelUploaderProps {
   onClose: () => void;
   fetchOrders: (page: number) => void;
+  startDate: Date;
+  endDate: Date;
 }
 
-export default function ExcelUploader({ onClose, fetchOrders}: ExcelUploaderProps) {
+export default function ExcelUploader({ onClose, fetchOrders, startDate, endDate}: ExcelUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [parsedData, setParsedData] = useState<any[]>([]);
 
@@ -50,7 +52,7 @@ export default function ExcelUploader({ onClose, fetchOrders}: ExcelUploaderProp
                 trackingNumber: item['운송장번호']
             }
         });
-        const result = await updateTrackingNumbers(items);
+        const result = await updateTrackingNumbers(items, startDate, endDate);
         if (result) {
             alert('운송장번호가 성공적으로 등록되었습니다.');
             fetchOrders(0);

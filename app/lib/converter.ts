@@ -15,3 +15,7 @@ export function convertJsonToExcel(dto: any) {
         type: 'array'
       });
 }
+
+export function convertDateToLocalDate(date: Date) {
+  return date.toISOString();
+}

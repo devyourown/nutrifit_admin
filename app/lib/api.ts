@@ -1,3 +1,4 @@
+import { convertDateToLocalDate } from "./converter";
 import { CouponDto, OrderItemExcelDto, ProductDto } from "./types";
 
 export async function fetchUsersByPage(page: number) {
@@ -199,10 +200,10 @@ export async function getOrdersByStatus(status: string, page: number) {
     }
 }
 
-export async function getOrdersForExcelByFilter(status: string) {
+export async function getOrdersForExcelByFilter(status: string, limit: number) {
     try {
         const token = localStorage.getItem('jwt');
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/excel/filter?status=${status}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/excel/filter?status=${status}&limit=${limit}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
@@ -214,10 +215,14 @@ export async function getOrdersForExcelByFilter(status: string) {
     }
 }
 
-export async function updateTrackingNumbers(items: OrderItemExcelDto[]) {
+export async function updateTrackingNumbers(items: OrderItemExcelDto[], startDate: Date, endDate: Date) {
     try {
         const token = localStorage.getItem('jwt');
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/tracking`, {
+        const formattedStartDate = convertDateToLocalDate(startDate);
+        const formattedEndDate = convertDateToLocalDate(endDate);
+
+        // URL에 쿼리 파라미터로 변환된 날짜 추가
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/tracking?startDate=${formattedStartDate}&endDate=${formattedEndDate}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,

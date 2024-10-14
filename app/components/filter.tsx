@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 
 interface FiltersProps {
+  status: string;
   onFilterChange: (status: string) => void;
   kindOfFilters: string[];
+  toggleFilter: () => void;
 }
 
-export default function Filters({  kindOfFilters, onFilterChange }: FiltersProps) {
-  const [selectedFilter, setSelectedFilter] = useState<string>('');
+export default function Filters({  status, kindOfFilters, onFilterChange, toggleFilter }: FiltersProps) {
+  const [selectedFilter, setSelectedFilter] = useState<string>(status);
 
   function handleFilterChange(filter: string) {
     setSelectedFilter(filter);
@@ -14,6 +16,7 @@ export default function Filters({  kindOfFilters, onFilterChange }: FiltersProps
 
   function applyFilters() {
     onFilterChange(selectedFilter);
+    toggleFilter();
     // 여기에 필터링 로직을 추가하여 API 호출을 통해 제품을 필터링할 수 있습니다.
   }
 

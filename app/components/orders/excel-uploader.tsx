@@ -1,5 +1,6 @@
 import { updateTrackingNumbers } from "@/app/lib/api";
 import { useState } from "react";
+import { IoIosSync } from "react-icons/io";
 import * as XLSX from "xlsx";
 
 interface ExcelUploaderProps {
@@ -13,6 +14,7 @@ export default function ExcelUploader({
 }: ExcelUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [parsedData, setParsedData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -45,6 +47,7 @@ export default function ExcelUploader({
 
   const handleSubmit = async () => {
     if (parsedData.length > 0) {
+      setLoading(true);
       const items = parsedData.map((item) => {
         return {
           orderId: item["주문번호"],
@@ -54,6 +57,7 @@ export default function ExcelUploader({
         };
       });
       const result = await updateTrackingNumbers(items);
+      setLoading(false);
       if (result) {
         alert("운송장번호가 성공적으로 등록되었습니다.");
         fetchOrders(0);
@@ -77,11 +81,16 @@ export default function ExcelUploader({
       <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
       {file && <p className="mt-4 text-green-600">선택된 파일: {file.name}</p>}
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+        className={`bg-blue-500 text-white px-4 py-2 rounded mt-4 ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
         onClick={handleSubmit}
-        disabled={!file}
+        disabled={!file || loading}
       >
-        업로드
+        {loading ? (
+          <IoIosSync className="animate-spin inline-block mr-2" />
+        ) : (
+          "업로드"
+        )}
+        {loading ? "업로드 중..." : "업로드"}
       </button>
     </div>
   );

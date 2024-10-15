@@ -16,6 +16,7 @@ import Modal from "../components/orders/upload-modal";
 import ExcelUploader from "../components/orders/excel-uploader";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { IoIosSync } from "react-icons/io";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -54,13 +55,13 @@ export default function Orders() {
   }, [status, currentPage, startDate, endDate]);
 
   async function fetchOrders(page: number) {
-    const data = await getOrdersByPage(page);
+    const data = await getOrdersByPage(page, startDate, endDate);
     setOrders(data.content);
     setTotalPages(data.page.totalPages);
   }
 
   async function fetchOrdersByFilter(status: string, page: number) {
-    const data = await getOrdersByStatus(status, page);
+    const data = await getOrdersByStatus(status, page, startDate, endDate);
     setOrders(data.content);
     setTotalPages(data.page.totalPages);
   }
@@ -125,10 +126,14 @@ export default function Orders() {
             운송장번호 업로드하기
           </button>
           <button
-            className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded mr-2"
+            className={`bg-blue-500 text-white px-4 py-2 rounded ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={handleExport}
+            disabled={loading}
           >
-            주문목록 엑셀로 내려받기
+            {loading && (
+            <IoIosSync className="animate-spin inline-block mr-2" />
+          )}
+          {loading ? "내려받는 중..." : "선택 목록 엑셀로 내려받기"}
           </button>
         </div>
       </div>

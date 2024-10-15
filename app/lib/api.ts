@@ -1,4 +1,3 @@
-import { convertDateToLocalDate } from "./converter";
 import { CouponDto, OrderItemExcelDto, ProductDto } from "./types";
 
 export async function fetchUsersByPage(page: number) {
@@ -205,13 +204,15 @@ export async function fetchPaymentsByUser(id: number, page: number) {
   }
 }
 
-export async function getOrdersByPage(page: number) {
+export async function getOrdersByPage(page: number, startDate: Date, endDate: Date) {
   try {
     const token = localStorage.getItem("jwt");
+    const startDateStr = startDate.toISOString();
+    const endDateStr = endDate.toISOString();
     const response = await fetch(
       `${
         process.env.NEXT_PUBLIC_BACKEND_URL
-      }/orders/admin?page=${page}&size=${10}`,
+      }/orders/admin?page=${page}&size=${10}&startDate=${startDateStr}&endDate=${endDateStr}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -225,13 +226,15 @@ export async function getOrdersByPage(page: number) {
   }
 }
 
-export async function getOrdersByStatus(status: string, page: number) {
+export async function getOrdersByStatus(status: string, page: number, startDate: Date, endDate: Date) {
   try {
     const token = localStorage.getItem("jwt");
+    const startDateStr = startDate.toISOString();
+    const endDateStr = endDate.toISOString();
     const response = await fetch(
       `${
         process.env.NEXT_PUBLIC_BACKEND_URL
-      }/orders/admin/filter?status=${status}&page=${page}&size=${10}`,
+      }/orders/admin/filter?status=${status}&page=${page}&size=${10}&startDate=${startDateStr}&endDate=${endDateStr}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -46,7 +46,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       );
     }
     return pages;
-  }, [currentPage, totalPages, onPageChange]);
+  }, [handlePageRange, currentPage, onPageChange]);
 
   return (
     <div className="flex justify-center items-center mt-6 space-x-4">
@@ -57,7 +57,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
                     ${currentPage === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"} 
                     focus:outline-none transition`}
       >
-        {"<<"} 처음으로
+        처음으로
       </button>
       {/* 이전 페이지로 */}
       <button
@@ -90,7 +90,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
                     ${currentPage + 1 >= totalPages ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"} 
                     focus:outline-none transition`}
       >
-        끝으로 {">>"}
+        끝으로
       </button>
     </div>
   );

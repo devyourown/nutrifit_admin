@@ -90,7 +90,7 @@ export default function ExcelUploader({
         ) : (
           "업로드"
         )}
-        {loading ? "업로드 중..." : "업로드"}
+        {loading && "업로드 중..."}
       </button>
     </div>
   );

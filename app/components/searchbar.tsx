@@ -2,11 +2,17 @@
 
 import { useState } from "react";
 
-export default function Searchbar() {
+interface SearchbarProps {
+    debouncedSearch: (query: string) => void;
+}
+
+export default function Searchbar({debouncedSearch}: SearchbarProps) {
     const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchQuery(e.target.value);
+    const query = e.target.value;
+    setSearchQuery(query);
+    debouncedSearch(query);
   };
     return (
         <div className="flex justify-between items-center mb-6">

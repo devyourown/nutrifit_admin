@@ -15,6 +15,7 @@ export default function Page() {
   const [totalPages, setTotalPages] = useState(0);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filterStatus, setFilterStatus] = useState('');
   const [editingProduct, setEditingProduct] = useState<ProductDto | undefined>(undefined);
 
     const handleAddProduct = async (newProduct: ProductDto, images: File[], detailImages: File[]) => {
@@ -125,7 +126,7 @@ export default function Page() {
             >
               필터
             </button>
-            {isFilterOpen && <Filters kindOfFilters={["출시전", "재고없음"]} onFilterChange={() => fetchProducts(1)} />}
+            {isFilterOpen && <Filters kindOfFilters={["출시전", "재고없음"]} onFilterChange={() => fetchProducts(1)} toggleFilter={toggleFilter} status={filterStatus}/>}
         </div>
         <div>
           <button className="bg-blue-500 text-white px-4 py-2 rounded"

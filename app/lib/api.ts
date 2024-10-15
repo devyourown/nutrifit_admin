@@ -204,6 +204,28 @@ export async function fetchPaymentsByUser(id: number, page: number) {
   }
 }
 
+export async function getOrdersByQuery(page: number, startDate: Date, endDate: Date, query: string) {
+  try {
+    const token = localStorage.getItem("jwt");
+    const startDateStr = startDate.toISOString();
+    const endDateStr = endDate.toISOString();
+    const response = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/orders/admin/query?page=${page}&size=${10}&startDate=${startDateStr}&endDate=${endDateStr}&query=${query}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return await response.json();
+  } catch (e) {
+    console.error("Failed to fetch orders : ", e);
+  }
+}
+
 export async function getOrdersByPage(page: number, startDate: Date, endDate: Date) {
   try {
     const token = localStorage.getItem("jwt");
@@ -229,12 +251,13 @@ export async function getOrdersByPage(page: number, startDate: Date, endDate: Da
 export async function getOrdersByStatus(status: string, page: number, startDate: Date, endDate: Date) {
   try {
     const token = localStorage.getItem("jwt");
+    const encodedStatus = encodeURIComponent(status);
     const startDateStr = startDate.toISOString();
     const endDateStr = endDate.toISOString();
     const response = await fetch(
       `${
         process.env.NEXT_PUBLIC_BACKEND_URL
-      }/orders/admin/filter?status=${status}&page=${page}&size=${10}&startDate=${startDateStr}&endDate=${endDateStr}`,
+      }/orders/admin/filter?status=${encodedStatus}&page=${page}&size=${10}&startDate=${startDateStr}&endDate=${endDateStr}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -250,9 +273,10 @@ export async function getOrdersByStatus(status: string, page: number, startDate:
 
 export async function getOrdersForExcelByFilter(status: string, limit: number) {
   try {
+    const encodedStatus = encodeURIComponent(status);
     const token = localStorage.getItem("jwt");
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/excel/filter?status=${status}&limit=${limit}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/excel/filter?status=${encodedStatus}&limit=${limit}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

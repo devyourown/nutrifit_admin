@@ -36,7 +36,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           {/* Main Content */}
           <main className="flex-1 bg-gray-100 p-6">
-              <Searchbar/>
               {children}
           </main>
       </div>

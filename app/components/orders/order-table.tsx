@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface Order {
   id: string;
   orderDate: string;
@@ -11,9 +9,24 @@ interface Order {
 
 interface OrderTableProps {
   orders: Order[];
+  query: string;
 }
 
-export default function OrderTable({ orders }: OrderTableProps) {
+function highlightText(text: string, query: string) {
+  if (!query) return text;
+  const parts = text.split(new RegExp(`(${query})`, 'gi'));
+  return parts.map((part, index) =>
+    part.toLowerCase() === query.toLowerCase() ? (
+      <mark key={index} className="bg-yellow-200">
+        {part}
+      </mark>
+    ) : (
+      part
+    )
+  );
+}
+
+export default function OrderTable({ orders, query }: OrderTableProps) {
   return (
     <table className="min-w-full bg-white border border-gray-200">
       <thead>
@@ -29,12 +42,14 @@ export default function OrderTable({ orders }: OrderTableProps) {
       <tbody>
         {orders.map((order, index) => (
           <tr key={order.id + index}>
-            <td className="px-4 py-2 border-b text-center">{order.id}</td>
-            <td className="px-4 py-2 border-b text-center">{order.orderDate}</td>
-            <td className="px-4 py-2 border-b text-center">{order.productName}</td>
-            <td className="px-4 py-2 border-b text-center">{order.username}</td>
-            <td className="px-4 py-2 border-b text-center">{order.fulfillment}</td>
-            <td className="px-4 py-2 border-b text-center">{order.trackingNumber ? order.trackingNumber : '-'}</td>
+            <td className="px-4 py-2 border-b text-center">{highlightText(order.id, query)}</td>
+            <td className="px-4 py-2 border-b text-center">{highlightText(order.orderDate, query)}</td>
+            <td className="px-4 py-2 border-b text-center">{highlightText(order.productName, query)}</td>
+            <td className="px-4 py-2 border-b text-center">{highlightText(order.username, query)}</td>
+            <td className="px-4 py-2 border-b text-center">{highlightText(order.fulfillment, query)}</td>
+            <td className="px-4 py-2 border-b text-center">
+              {order.trackingNumber ? highlightText(order.trackingNumber.toString(), query) : '-'}
+            </td>
           </tr>
         ))}
       </tbody>

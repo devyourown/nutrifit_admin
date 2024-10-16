@@ -204,6 +204,24 @@ export async function fetchPaymentsByUser(id: number, page: number) {
   }
 }
 
+export async function getOrdersByUser(id: number, page: number) {
+  try {
+    const token = localStorage.getItem("jwt");
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/orders/admin/user?userId=${id}&page=${page}&size=10`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return await response.json();
+  } catch (e) {
+    console.error("Failed to fetch orders : ", e);
+  }
+}
+
 export async function getOrdersByQuery(page: number, startDate: Date, endDate: Date, query: string) {
   try {
     const token = localStorage.getItem("jwt");

@@ -28,6 +28,10 @@ function highlightText(text: string, query: string) {
 
 export default function OrderTable({ orders, query }: OrderTableProps) {
   return (
+    <div className="min-w-full bg-white border border-gray-200 p-4">
+      {orders.length === 0 ? (
+        <div className="text-center text-gray-500">해당하는 주문이 없습니다.</div>
+      ) : (
     <table className="min-w-full bg-white border border-gray-200">
       <thead>
         <tr>
@@ -54,5 +58,7 @@ export default function OrderTable({ orders, query }: OrderTableProps) {
         ))}
       </tbody>
     </table>
+      )}
+  </div>
   );
 }

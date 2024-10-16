@@ -7,6 +7,16 @@ export type OrderItemExcelDto = {
     trackingNumber: string;
 }
 
+export type OrderItemDto = {
+    orderId: string;
+    orderDate: string;
+    imageUrl: string;
+    productName: string;
+    quantity: number;
+    price: number;
+    totalAmount: number;
+}
+
 export type OptionDto = {
     quantity: number;
     price: number;

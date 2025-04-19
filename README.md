@@ -53,7 +53,7 @@ Nutrifit Admin은 Nutrifit 서비스의 관리자 페이지입니다.
 
 -   [Nutrifit Frontend](https://github.com/devyourown/nutrifit_front)
 -   [Nutrifit Backend](https://github.com/devyourown/nutrifit_mall)
--   [Nutrifit Overview Docs](https://github.com/devyourown/nutrifit_overview)
+-   [Nutrifit Overview Docs](https://github.com/devyourown/nutrifit-overview)
 
 ---
 
